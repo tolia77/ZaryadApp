@@ -10,5 +10,6 @@ namespace ZaryadApp.Data
             : base(options)
         {
         }
+        public DbSet<ZaryadApp.Models.Review> Review { get; set; } = default!;
     }
 }
