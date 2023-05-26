@@ -7,11 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
-using System.Security.Claims;
-using System.Diagnostics;
 
 namespace ZaryadApp.Controllers
 {
@@ -32,7 +29,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Reviews/Details/5
-        public async Task<IActionResult> Details(string id)
+        public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Review == null)
             {
@@ -41,7 +38,7 @@ namespace ZaryadApp.Controllers
 
             var review = await _context.Review
                 .Include(r => r.ApplicationUser)
-                .FirstOrDefaultAsync(m => m.ReviewId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (review == null)
             {
                 return NotFound();
@@ -53,7 +50,7 @@ namespace ZaryadApp.Controllers
         // GET: Reviews/Create
         public IActionResult Create()
         {
-            ViewData["ReviewId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -62,33 +59,24 @@ namespace ZaryadApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ReviewId,Text,CreatedAt")] Review review)
+        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,ApplicationUserId")] Review review)
         {
-            //ClaimsPrincipal currentUser = this.User;
-            //var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
-            //var user = _context.Users.FirstOrDefault(u => u.Id == currentUserID);
-            //review.ApplicationUser = user;
-            //Debug.WriteLine(review.ApplicationUser.UserName);
             foreach (var modelState in ViewData.ModelState.Values)
             {
                 foreach (ModelError error in modelState.Errors)
                 {
-                    Debug.WriteLine(error.ToString());
+                    Debug.WriteLine(error.ErrorMessage);
                 }
             }
-            Debug.WriteLine(ModelState.IsValid);
-            if (ModelState.IsValid)
-            {
-                _context.Add(review);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ReviewId"] = new SelectList(_context.Users, "Id", "Id", review.ReviewId);
-            return View(review);
+            review.CreatedAt = DateTime.Now;
+            _context.Add(review);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Reviews/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Review == null)
             {
@@ -100,7 +88,7 @@ namespace ZaryadApp.Controllers
             {
                 return NotFound();
             }
-            ViewData["ReviewId"] = new SelectList(_context.Users, "Id", "Id", review.ReviewId);
+            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", review.ApplicationUserId);
             return View(review);
         }
 
@@ -109,9 +97,9 @@ namespace ZaryadApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ReviewId,Text,CreatedAt")] Review review)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,CreatedAt,ApplicationUserId")] Review review)
         {
-            if (id != review.ReviewId)
+            if (id != review.Id)
             {
                 return NotFound();
             }
@@ -125,7 +113,7 @@ namespace ZaryadApp.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReviewExists(review.ReviewId))
+                    if (!ReviewExists(review.Id))
                     {
                         return NotFound();
                     }
@@ -136,12 +124,12 @@ namespace ZaryadApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ReviewId"] = new SelectList(_context.Users, "Id", "Id", review.ReviewId);
+            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", review.ApplicationUserId);
             return View(review);
         }
 
         // GET: Reviews/Delete/5
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Review == null)
             {
@@ -150,7 +138,7 @@ namespace ZaryadApp.Controllers
 
             var review = await _context.Review
                 .Include(r => r.ApplicationUser)
-                .FirstOrDefaultAsync(m => m.ReviewId == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (review == null)
             {
                 return NotFound();
@@ -162,7 +150,7 @@ namespace ZaryadApp.Controllers
         // POST: Reviews/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Review == null)
             {
@@ -173,14 +161,14 @@ namespace ZaryadApp.Controllers
             {
                 _context.Review.Remove(review);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ReviewExists(string id)
+        private bool ReviewExists(int id)
         {
-          return (_context.Review?.Any(e => e.ReviewId == id)).GetValueOrDefault();
+            return (_context.Review?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

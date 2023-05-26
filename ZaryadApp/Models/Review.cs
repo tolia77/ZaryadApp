@@ -1,17 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ZaryadApp.Models
+﻿namespace ZaryadApp.Models
 {
     public class Review
     {
-        [ForeignKey("ApplicationUser")]
-        [Required]
-        public string ReviewId { get; set; }
-        [Required]
+        public int Id { get; set; }
         public string Text { get; set; }
         public DateTime CreatedAt { get; set; }
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        public string ApplicationUserId { get; set; }
+        public ApplicationUser ApplicationUser { get; set; }
         public Review()
         {
             
