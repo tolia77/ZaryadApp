@@ -13,13 +13,12 @@ namespace ZaryadApp.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-
             builder.Entity<ApplicationUser>()
                 .HasOne(u => u.Review)
                 .WithOne(r => r.ApplicationUser)
                 .HasForeignKey<Review>(r => r.ApplicationUserId);
         }
-        public DbSet<ZaryadApp.Models.Review> Review { get; set; } = default!;
-        public DbSet<ZaryadApp.Models.Station> Station { get; set; } = default!;
+        public DbSet<Review> Review { get; set; } = default!;
+        public DbSet<Station> Station { get; set; } = default!;
     }
 }

@@ -9,7 +9,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultUI();
 builder.Services.AddControllersWithViews();
 
@@ -39,6 +39,5 @@ app.MapControllerRoute(
 var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture("uk");
 
 localizationOptions.DefaultRequestCulture.Culture.NumberFormat.NumberDecimalSeparator = ".";
-
 app.UseRequestLocalization(localizationOptions);
 app.Run();

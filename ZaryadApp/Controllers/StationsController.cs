@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,9 +23,15 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Stations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string city, decimal price)
         {
-              return _context.Station != null ? 
+            var stations = from m in _context.Station select m;
+            if (!String.IsNullOrEmpty(city))
+            {
+                stations = stations.Where(s => s.City!.Contains(city));
+                return View(await stations.ToListAsync());
+            }
+            return _context.Station != null ? 
                           View(await _context.Station.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Station'  is null.");
         }
@@ -46,6 +55,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Stations/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -56,6 +66,7 @@ namespace ZaryadApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([Bind("Id,City,Address,Plug,Voltage,Price")] Station station)
         {
             if (ModelState.IsValid)
@@ -68,6 +79,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Stations/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Station == null)
@@ -88,6 +100,7 @@ namespace ZaryadApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,City,Address,Plug,Voltage,Price")] Station station)
         {
             if (id != station.Id)
@@ -119,6 +132,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Stations/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Station == null)
@@ -139,6 +153,7 @@ namespace ZaryadApp.Controllers
         // POST: Stations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Station == null)

@@ -9,6 +9,16 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-action="Index">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label class="control-label">City</label>
+        <input name="City" class="form-control" />
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Index" asp-route-city=name class="btn btn-primary" />
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
