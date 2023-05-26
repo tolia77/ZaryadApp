@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -35,5 +36,9 @@ app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture("uk");
 
+localizationOptions.DefaultRequestCulture.Culture.NumberFormat.NumberDecimalSeparator = ".";
+
+app.UseRequestLocalization(localizationOptions);
 app.Run();

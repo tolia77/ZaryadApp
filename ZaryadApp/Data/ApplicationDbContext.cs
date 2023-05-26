@@ -11,5 +11,6 @@ namespace ZaryadApp.Data
         {
         }
         public DbSet<ZaryadApp.Models.Review> Review { get; set; } = default!;
+        public DbSet<ZaryadApp.Models.Station> Station { get; set; } = default!;
     }
 }

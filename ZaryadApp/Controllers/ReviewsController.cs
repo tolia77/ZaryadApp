@@ -7,8 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
+using System.Security.Claims;
+using System.Diagnostics;
 
 namespace ZaryadApp.Controllers
 {
@@ -61,13 +64,19 @@ namespace ZaryadApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ReviewId,Text,CreatedAt")] Review review)
         {
+            //ClaimsPrincipal currentUser = this.User;
+            //var currentUserID = currentUser.FindFirst(ClaimTypes.NameIdentifier).Value;
+            //var user = _context.Users.FirstOrDefault(u => u.Id == currentUserID);
+            //review.ApplicationUser = user;
+            //Debug.WriteLine(review.ApplicationUser.UserName);
             foreach (var modelState in ViewData.ModelState.Values)
             {
                 foreach (ModelError error in modelState.Errors)
                 {
-                    Debug.WriteLine(error.ErrorMessage);
+                    Debug.WriteLine(error.ToString());
                 }
             }
+            Debug.WriteLine(ModelState.IsValid);
             if (ModelState.IsValid)
             {
                 _context.Add(review);

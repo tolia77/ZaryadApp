@@ -5,5 +5,9 @@ namespace ZaryadApp.Models
     public class ApplicationUser : IdentityUser
     {
         public virtual Review Review { get; set; }
+        public ApplicationUser()
+        {
+
+        }
     }
 }
