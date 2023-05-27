@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ZaryadApp.Data;
 
@@ -11,9 +12,11 @@ using ZaryadApp.Data;
 namespace ZaryadApp.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230527094217_add post")]
+    partial class addpost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -275,39 +278,6 @@ namespace ZaryadApp.Migrations
                     b.ToTable("Review");
                 });
 
-            modelBuilder.Entity("ZaryadApp.Models.Settings", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("ApplicationUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Plug")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("Voltage")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
-
-                    b.ToTable("Settings");
-                });
-
             modelBuilder.Entity("ZaryadApp.Models.Station", b =>
                 {
                     b.Property<int>("Id")
@@ -401,23 +371,10 @@ namespace ZaryadApp.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("ZaryadApp.Models.Settings", b =>
-                {
-                    b.HasOne("ZaryadApp.Models.ApplicationUser", "ApplicationUser")
-                        .WithMany("Settings")
-                        .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ApplicationUser");
-                });
-
             modelBuilder.Entity("ZaryadApp.Models.ApplicationUser", b =>
                 {
                     b.Navigation("Review")
                         .IsRequired();
-
-                    b.Navigation("Settings");
                 });
 #pragma warning restore 612, 618
         }

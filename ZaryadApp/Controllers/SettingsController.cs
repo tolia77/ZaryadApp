@@ -1,56 +1,53 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authorization;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
-using NuGet.Configuration;
-using System.Security.Claims;
 
 namespace ZaryadApp.Controllers
 {
-    public class ReviewsController : Controller
+    public class SettingsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public ReviewsController(ApplicationDbContext context)
+        public SettingsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Reviews
+        // GET: Settings
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Review.Include(r => r.ApplicationUser);
+            var applicationDbContext = _context.Settings.Include(s => s.ApplicationUser);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Reviews/Details/5
+        // GET: Settings/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Review == null)
+            if (id == null || _context.Settings == null)
             {
                 return NotFound();
             }
 
-            var review = await _context.Review
-                .Include(r => r.ApplicationUser)
+            var settings = await _context.Settings
+                .Include(s => s.ApplicationUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (review == null)
+            if (settings == null)
             {
                 return NotFound();
             }
 
-            return View(review);
+            return View(settings);
         }
 
-        // GET: Reviews/Create
+        // GET: Settings/Create
         [Authorize]
         public IActionResult Create()
         {
@@ -58,50 +55,46 @@ namespace ZaryadApp.Controllers
             return View();
         }
 
-        // POST: Reviews/Create
+        // POST: Settings/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,ApplicationUserId")] Review review)
+        public async Task<IActionResult> Create([Bind("Id,City,Plug,Price,Voltage,ApplicationUserId")] Settings settings)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            review.CreatedAt = DateTime.Now;
-            review.ApplicationUserId = userId;
-            _context.Add(review);
+            settings.ApplicationUserId = userId;
+            _context.Add(settings);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-
         }
 
-        // GET: Reviews/Edit/5
-        [Authorize]
+        // GET: Settings/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Review == null)
+            if (id == null || _context.Settings == null)
             {
                 return NotFound();
             }
 
-            var review = await _context.Review.FindAsync(id);
-            if (review == null)
+            var settings = await _context.Settings.FindAsync(id);
+            if (settings == null)
             {
                 return NotFound();
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", review.ApplicationUserId);
-            return View(review);
+            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", settings.ApplicationUserId);
+            return View(settings);
         }
 
-        // POST: Reviews/Edit/5
+        // POST: Settings/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Text,CreatedAt,ApplicationUserId")] Review review)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,City,Plug,Price,Voltage,ApplicationUserId")] Settings settings)
         {
-            if (id != review.Id)
+            if (id != settings.Id)
             {
                 return NotFound();
             }
@@ -110,12 +103,12 @@ namespace ZaryadApp.Controllers
             {
                 try
                 {
-                    _context.Update(review);
+                    _context.Update(settings);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ReviewExists(review.Id))
+                    if (!SettingsExists(settings.Id))
                     {
                         return NotFound();
                     }
@@ -126,53 +119,51 @@ namespace ZaryadApp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", review.ApplicationUserId);
-            return View(review);
+            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id", settings.ApplicationUserId);
+            return View(settings);
         }
 
-        // GET: Reviews/Delete/5
-        [Authorize]
+        // GET: Settings/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Review == null)
+            if (id == null || _context.Settings == null)
             {
                 return NotFound();
             }
 
-            var review = await _context.Review
-                .Include(r => r.ApplicationUser)
+            var settings = await _context.Settings
+                .Include(s => s.ApplicationUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (review == null)
+            if (settings == null)
             {
                 return NotFound();
             }
 
-            return View(review);
+            return View(settings);
         }
 
-        // POST: Reviews/Delete/5
+        // POST: Settings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Review == null)
+            if (_context.Settings == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Review'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Settings'  is null.");
             }
-            var review = await _context.Review.FindAsync(id);
-            if (review != null)
+            var settings = await _context.Settings.FindAsync(id);
+            if (settings != null)
             {
-                _context.Review.Remove(review);
+                _context.Settings.Remove(settings);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ReviewExists(int id)
+        private bool SettingsExists(int id)
         {
-            return (_context.Review?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Settings?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

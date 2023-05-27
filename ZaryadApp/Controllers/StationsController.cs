@@ -23,19 +23,64 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Stations
-        public async Task<IActionResult> Index(string city, decimal price)
+        public async Task<IActionResult> Index(string city, decimal price, string plug, decimal voltage)
         {
+            List<string> plugs = new List<string>() 
+            {
+                "CHAdeMO", "CCS", "Type 2", "J-1772", "GB/T (Fast)", "Wall (Euro)"
+            };
+            ViewBag.Plugs = new SelectList(plugs);
             var stations = from m in _context.Station select m;
             if (!String.IsNullOrEmpty(city))
             {
                 stations = stations.Where(s => s.City!.Contains(city));
-                return View(await stations.ToListAsync());
             }
-            return _context.Station != null ? 
+            if (price > 0)
+            {
+                stations = stations.Where(p => p.Price <= price);
+            }
+            if (voltage > 0)
+            {
+                stations = stations.Where(v => v.Voltage <= voltage);
+            }
+            if (!String.IsNullOrEmpty(plug))
+            {
+                stations = stations.Where(m => m.Plug!.Contains(plug));
+            }
+            return View(await stations.ToListAsync());
+            return _context.Station != null ?
                           View(await _context.Station.ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.Station'  is null.");
         }
-
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdminIndex(string city, decimal price, string plug, decimal voltage)
+        {
+            List<string> plugs = new List<string>()
+            {
+                "CHAdeMO", "CCS", "Type 2", "J-1772", "GB/T (Fast)", "Wall (Euro)"
+            };
+            ViewBag.Plugs = new SelectList(plugs);
+            var stations = from m in _context.Station select m;
+            if (!String.IsNullOrEmpty(city))
+            {
+                stations = stations.Where(s => s.City!.Contains(city));
+            }
+            if (price > 0)
+            {
+                stations = stations.Where(p => p.Price <= price);
+            }
+            if (voltage > 0)
+            {
+                stations = stations.Where(v => v.Voltage <= voltage);
+            }
+            if (!String.IsNullOrEmpty(plug))
+            {
+                stations = stations.Where(m => m.Plug!.Contains(plug));
+            }
+            return stations != null ?
+                          View(await stations.ToListAsync()) :
+                          Problem("Entity set 'ApplicationDbContext.Station'  is null.");
+        }
         // GET: Stations/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -165,14 +210,14 @@ namespace ZaryadApp.Controllers
             {
                 _context.Station.Remove(station);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool StationExists(int id)
         {
-          return (_context.Station?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Station?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
