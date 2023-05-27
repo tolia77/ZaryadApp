@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ZaryadApp.Controllers
 {
@@ -20,7 +22,7 @@ namespace ZaryadApp.Controllers
         {
             _context = context;
         }
-
+        
         // GET: Settings
         public async Task<IActionResult> Index()
         {
@@ -51,7 +53,6 @@ namespace ZaryadApp.Controllers
         [Authorize]
         public IActionResult Create()
         {
-            ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -59,7 +60,6 @@ namespace ZaryadApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize]
         public async Task<IActionResult> Create([Bind("Id,City,Plug,Price,Voltage,ApplicationUserId")] Settings settings)
         {

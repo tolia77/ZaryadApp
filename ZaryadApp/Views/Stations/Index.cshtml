@@ -6,8 +6,7 @@
 
 <h1>Index</h1>
 
-@using (Html.BeginForm("Index", "Stations", FormMethod.Get))
-{
+<form asp-controller="Stations" asp-action="Index" method="get" id="searchForm">
     <table>
         <tr>
             <td>
@@ -23,11 +22,34 @@
                 @Html.DropDownList("plug", ViewBag.Plugs, "Роз'єм", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
             <td>
-                <input type="submit" value="Пошук" class="btn btn-success"/>
+                <input type="submit" value="Пошук" id="search" class="btn btn-success"/>
+            </td>
+            <td>
+                <button type="button" id="createSettingsButton" class="btn btn-primary">Создать настройки</button>
+            </td>
+            <td>
+                @Html.DropDownList("plug", ViewBag.Settings, "Налаштування", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
         </tr>
     </table>
-}
+</form>
+<script>
+    const button = document.getElementById('createSettingsButton')
+    button.addEventListener('click', function () {
+        var formData = new FormData(document.getElementById('searchForm'));
+        console.log(formData)
+        fetch('@Url.Action("Create", "Settings")', {
+            method: 'POST',
+            body: formData
+        }).then(function (response) {
+            if (response.ok) {
+                button.innerHTML = "Збережено"
+            } else {
+                button.innerHTML = "Помилка"
+            }
+        })
+    });
+</script>
 <table class="table">
     <thead>
         <tr>

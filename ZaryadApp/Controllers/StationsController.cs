@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ZaryadApp.Controllers
 {
@@ -21,7 +22,26 @@ namespace ZaryadApp.Controllers
         {
             _context = context;
         }
+        [BindProperty]
+        public InputModel Input { get; set; }
+        public class InputModel
+        {
+            [DataType(DataType.Text)]
+            [Display(Name = "City")]
+            public string City { get; set; }
 
+            [DataType(DataType.Text)]
+            [Display(Name = "Plug")]
+            public string Plug { get; set; }
+
+            [DataType(DataType.Text)]
+            [Display(Name = "Price")]
+            public string Price { get; set; }
+
+            [DataType(DataType.Text)]
+            [Display(Name = "Voltage")]
+            public string Voltage { get; set; }
+        }
         // GET: Stations
         public async Task<IActionResult> Index(string city, decimal price, string plug, decimal voltage)
         {
