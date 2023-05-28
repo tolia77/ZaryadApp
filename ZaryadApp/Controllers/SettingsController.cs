@@ -22,8 +22,9 @@ namespace ZaryadApp.Controllers
         {
             _context = context;
         }
-        
+
         // GET: Settings
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Settings.Include(s => s.ApplicationUser);
@@ -31,6 +32,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Settings/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Settings == null)
@@ -71,6 +73,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Settings/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Settings == null)
@@ -92,6 +95,7 @@ namespace ZaryadApp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,City,Plug,Price,Voltage,ApplicationUserId")] Settings settings)
         {
             if (id != settings.Id)
@@ -124,6 +128,7 @@ namespace ZaryadApp.Controllers
         }
 
         // GET: Settings/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Settings == null)
@@ -145,6 +150,7 @@ namespace ZaryadApp.Controllers
         // POST: Settings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Settings == null)

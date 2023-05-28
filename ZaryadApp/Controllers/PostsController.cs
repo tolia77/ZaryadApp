@@ -28,6 +28,14 @@ namespace ZaryadApp.Controllers
                           Problem("Entity set 'ApplicationDbContext.Post'  is null.");
         }
 
+        // GET: Posts
+        public async Task<IActionResult> AdminIndex()
+        {
+            return _context.Post != null ?
+                        View(await _context.Post.ToListAsync()) :
+                        Problem("Entity set 'ApplicationDbContext.Post'  is null.");
+        }
+
         // GET: Posts/Details/5
         public async Task<IActionResult> Details(int? id)
         {

@@ -22,55 +22,64 @@ namespace ZaryadApp.Controllers
         {
             _context = context;
         }
-        [BindProperty]
-        public InputModel Input { get; set; }
-        public class InputModel
-        {
-            [DataType(DataType.Text)]
-            [Display(Name = "City")]
-            public string City { get; set; }
-
-            [DataType(DataType.Text)]
-            [Display(Name = "Plug")]
-            public string Plug { get; set; }
-
-            [DataType(DataType.Text)]
-            [Display(Name = "Price")]
-            public string Price { get; set; }
-
-            [DataType(DataType.Text)]
-            [Display(Name = "Voltage")]
-            public string Voltage { get; set; }
-        }
         // GET: Stations
-        public async Task<IActionResult> Index(string city, decimal price, string plug, decimal voltage)
+        public async Task<IActionResult> Index(string city, decimal price, string plug, decimal voltage, int settingsId)
         {
             List<string> plugs = new List<string>() 
             {
                 "CHAdeMO", "CCS", "Type 2", "J-1772", "GB/T (Fast)", "Wall (Euro)"
             };
+            ViewBag.context = _context;
+            ViewBag.Settings = new SelectList((from m in _context.Settings select m.Id).ToList());
             ViewBag.Plugs = new SelectList(plugs);
             var stations = from m in _context.Station select m;
-            if (!String.IsNullOrEmpty(city))
+            if (settingsId > 0)
             {
-                stations = stations.Where(s => s.City!.Contains(city));
+                Settings settings = _context.Settings.Find(settingsId);
+                if (!String.IsNullOrEmpty(settings.City))
+                {
+                    ViewData["city"] = settings.City;
+                    stations = stations.Where(s => s.City!.Contains(settings.City));
+                }
+                if (settings.Price > 0)
+                {
+                    ViewData["price"] = settings.Price;
+                    stations = stations.Where(p => p.Price <= settings.Price);
+                }
+                if (settings.Voltage > 0)
+                {
+                    ViewData["voltage"] = settings.Voltage;
+                    stations = stations.Where(v => v.Voltage <= settings.Voltage);
+                }
+                if (!String.IsNullOrEmpty(settings.Plug))
+                {
+                    ViewData["plug"] = settings.Plug;
+                    stations = stations.Where(m => m.Plug!.Contains(settings.Plug));
+                }
             }
-            if (price > 0)
+            else
             {
-                stations = stations.Where(p => p.Price <= price);
-            }
-            if (voltage > 0)
-            {
-                stations = stations.Where(v => v.Voltage <= voltage);
-            }
-            if (!String.IsNullOrEmpty(plug))
-            {
-                stations = stations.Where(m => m.Plug!.Contains(plug));
+                if (!String.IsNullOrEmpty(city))
+                {
+                    stations = stations.Where(s => s.City!.Contains(city));
+                }
+                if (price > 0)
+                {
+                    stations = stations.Where(p => p.Price <= price);
+                }
+                if (voltage > 0)
+                {
+                    stations = stations.Where(v => v.Voltage <= voltage);
+                }
+                if (!String.IsNullOrEmpty(plug))
+                {
+                    stations = stations.Where(m => m.Plug!.Contains(plug));
+                }
             }
             return View(await stations.ToListAsync());
-            return _context.Station != null ?
-                          View(await _context.Station.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Station'  is null.");
+            //return _context.Station != null ?
+            //              View(await _context.Station.ToListAsync()) :
+            //              Problem("Entity set 'ApplicationDbContext.Station'  is null.");
         }
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AdminIndex(string city, decimal price, string plug, decimal voltage)

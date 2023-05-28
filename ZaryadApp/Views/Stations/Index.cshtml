@@ -4,31 +4,32 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Заправні станції</h1>
 
 <form asp-controller="Stations" asp-action="Index" method="get" id="searchForm">
     <table>
         <tr>
             <td>
-                @Html.TextBox("city", null, new {Class = "form-control", placeholder = "Місто"})
+                <input class="form-control input-validation-error" id="city" name="city" placeholder="Місто" type="text" value="@ViewData["city"]">
             </td>
             <td>
-                @Html.TextBox("price", null, new {Class = "form-control", placeholder = "Максимальна ціна за кВт" })
+                <input class="form-control input-validation-error" id="price" name="price" placeholder="Максимальна ціна за кВт" type="text" value="@ViewData["price"]">
             </td>
             <td>
-                @Html.TextBox("voltage", null, new {Class = "form-control", placeholder = "Максимальна напруга" })
+
+                <input class="form-control input-validation-error" id="voltage" name="voltage" placeholder="Максимальна напруга" type="text" value="@ViewData["voltage"]">
             </td>
             <td>
                 @Html.DropDownList("plug", ViewBag.Plugs, "Роз'єм", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
             <td>
-                <input type="submit" value="Пошук" id="search" class="btn btn-success"/>
+                <button type="button" id="createSettingsButton" class="btn btn-primary">Зберегти фільтри</button>
             </td>
             <td>
-                <button type="button" id="createSettingsButton" class="btn btn-primary">Создать настройки</button>
+                @Html.DropDownList("settingsId", ViewBag.Settings, "Фільтри", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
             <td>
-                @Html.DropDownList("plug", ViewBag.Settings, "Налаштування", new {Class = "btn btn-secondary dropdown-toggle"})
+                <input type="submit" value="Пошук" id="search" class="btn btn-success" />
             </td>
         </tr>
     </table>

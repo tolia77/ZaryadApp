@@ -30,6 +30,13 @@ namespace ZaryadApp.Controllers
             var applicationDbContext = _context.Review.Include(r => r.ApplicationUser);
             return View(await applicationDbContext.ToListAsync());
         }
+        // GET: Reviews
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> AdminIndex()
+        {
+            var applicationDbContext = _context.Review.Include(r => r.ApplicationUser);
+            return View(await applicationDbContext.ToListAsync());
+        }
 
         // GET: Reviews/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -64,7 +71,7 @@ namespace ZaryadApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,Text,CreatedAt,ApplicationUserId")] Review review)
+        public async Task<IActionResult> Create([Bind("Id,Text,City,CreatedAt,ApplicationUserId")] Review review)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             review.CreatedAt = DateTime.Now;
