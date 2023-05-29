@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ZaryadApp.Models.Station>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Станції";
 }
 
 <h1>Заправні станції</h1>
@@ -23,13 +23,13 @@
                 @Html.DropDownList("plug", ViewBag.Plugs, "Роз'єм", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
             <td>
-                <button type="button" id="createSettingsButton" class="btn btn-primary">Зберегти фільтри</button>
-            </td>
-            <td>
                 @Html.DropDownList("settingsId", ViewBag.Settings, "Фільтри", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
             <td>
-                <input type="submit" value="Пошук" id="search" class="btn btn-success" />
+                <button type="button" id="createSettingsButton" class="submit-button">Зберегти</button>
+            </td>
+            <td>
+                <input class="submit-button" type="submit" value="Пошук" id="search" />
             </td>
         </tr>
     </table>
@@ -55,19 +55,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.City)
+                Місто
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Address)
+                Адреса
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Plug)
+                Роз'єм'
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Voltage)
+                Напруга
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                Ціна
             </th>
             <th></th>
         </tr>
@@ -91,7 +91,7 @@
                 @Html.DisplayFor(modelItem => item.Price)
             </td>
             <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                <a class="details-button" asp-action="Details" asp-route-id="@item.Id">Деталі</a>
             </td>
         </tr>
 }

@@ -23,12 +23,15 @@ namespace ZaryadApp.Controllers
         // GET: Posts
         public async Task<IActionResult> Index()
         {
-              return _context.Post != null ? 
-                          View(await _context.Post.ToListAsync()) :
+            var posts = await _context.Post.ToListAsync();
+            posts.Reverse();
+            return _context.Post != null ? 
+                          View(posts) :
                           Problem("Entity set 'ApplicationDbContext.Post'  is null.");
         }
 
         // GET: Posts
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> AdminIndex()
         {
             return _context.Post != null ?

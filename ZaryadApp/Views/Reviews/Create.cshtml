@@ -1,33 +1,45 @@
 ﻿@model ZaryadApp.Models.Review
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Залишити відгук";
 }
 
 <h1 class="page-header">Залишіть свій відгук</h1>
-<hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Text" class="control-label"></label>
-                <input asp-for="Text" class="form-control" />
-                <span asp-validation-for="Text" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="black-bg" asp-for="Text" class="control-label">Текст</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input class="black-input" asp-for="Text" />
+                        <span asp-validation-for="Text" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="black-bg" asp-for="City" class="control-label">Місто</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input class="black-input" asp-for="City" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Створити" class="btn btn-primary" />
+                <input class="submit-button" type="submit" value="Створити" />
             </div>
         </form>
     </div>
 </div>
 
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

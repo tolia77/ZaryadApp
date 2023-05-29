@@ -11,6 +11,8 @@ using Microsoft.EntityFrameworkCore;
 using ZaryadApp.Data;
 using ZaryadApp.Models;
 using System.ComponentModel.DataAnnotations;
+using NuGet.Configuration;
+using System.Security.Claims;
 
 namespace ZaryadApp.Controllers
 {
@@ -25,17 +27,19 @@ namespace ZaryadApp.Controllers
         // GET: Stations
         public async Task<IActionResult> Index(string city, decimal price, string plug, decimal voltage, int settingsId)
         {
-            List<string> plugs = new List<string>() 
+            List<string> plugs = new List<string>()
             {
                 "CHAdeMO", "CCS", "Type 2", "J-1772", "GB/T (Fast)", "Wall (Euro)"
             };
-            ViewBag.context = _context;
-            ViewBag.Settings = new SelectList((from m in _context.Settings select m.Id).ToList());
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            ViewBag.context = _context; var settingsIds = _context.Settings.Where(s => s.ApplicationUserId == userId).Select(s => s.Id).ToList();
+
+            ViewBag.Settings = new SelectList(settingsIds);
             ViewBag.Plugs = new SelectList(plugs);
             var stations = from m in _context.Station select m;
             if (settingsId > 0)
             {
-                Settings settings = _context.Settings.Find(settingsId);
+                Models.Settings settings = _context.Settings.Find(settingsId);
                 if (!String.IsNullOrEmpty(settings.City))
                 {
                     ViewData["city"] = settings.City;
@@ -77,38 +81,62 @@ namespace ZaryadApp.Controllers
                 }
             }
             return View(await stations.ToListAsync());
-            //return _context.Station != null ?
-            //              View(await _context.Station.ToListAsync()) :
-            //              Problem("Entity set 'ApplicationDbContext.Station'  is null.");
         }
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AdminIndex(string city, decimal price, string plug, decimal voltage)
+        public async Task<IActionResult> AdminIndex(string city, decimal price, string plug, decimal voltage, int settingsId)
         {
             List<string> plugs = new List<string>()
             {
                 "CHAdeMO", "CCS", "Type 2", "J-1772", "GB/T (Fast)", "Wall (Euro)"
             };
+            ViewBag.context = _context;
+            ViewBag.Settings = new SelectList((from m in _context.Settings select m.Id).ToList());
             ViewBag.Plugs = new SelectList(plugs);
             var stations = from m in _context.Station select m;
-            if (!String.IsNullOrEmpty(city))
+            if (settingsId > 0)
             {
-                stations = stations.Where(s => s.City!.Contains(city));
+                Models.Settings settings = _context.Settings.Find(settingsId);
+                if (!String.IsNullOrEmpty(settings.City))
+                {
+                    ViewData["city"] = settings.City;
+                    stations = stations.Where(s => s.City!.Contains(settings.City));
+                }
+                if (settings.Price > 0)
+                {
+                    ViewData["price"] = settings.Price;
+                    stations = stations.Where(p => p.Price <= settings.Price);
+                }
+                if (settings.Voltage > 0)
+                {
+                    ViewData["voltage"] = settings.Voltage;
+                    stations = stations.Where(v => v.Voltage <= settings.Voltage);
+                }
+                if (!String.IsNullOrEmpty(settings.Plug))
+                {
+                    ViewData["plug"] = settings.Plug;
+                    stations = stations.Where(m => m.Plug!.Contains(settings.Plug));
+                }
             }
-            if (price > 0)
+            else
             {
-                stations = stations.Where(p => p.Price <= price);
+                if (!String.IsNullOrEmpty(city))
+                {
+                    stations = stations.Where(s => s.City!.Contains(city));
+                }
+                if (price > 0)
+                {
+                    stations = stations.Where(p => p.Price <= price);
+                }
+                if (voltage > 0)
+                {
+                    stations = stations.Where(v => v.Voltage <= voltage);
+                }
+                if (!String.IsNullOrEmpty(plug))
+                {
+                    stations = stations.Where(m => m.Plug!.Contains(plug));
+                }
             }
-            if (voltage > 0)
-            {
-                stations = stations.Where(v => v.Voltage <= voltage);
-            }
-            if (!String.IsNullOrEmpty(plug))
-            {
-                stations = stations.Where(m => m.Plug!.Contains(plug));
-            }
-            return stations != null ?
-                          View(await stations.ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Station'  is null.");
+            return View(await stations.ToListAsync());
         }
         // GET: Stations/Details/5
         public async Task<IActionResult> Details(int? id)

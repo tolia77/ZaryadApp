@@ -1,40 +1,31 @@
 ﻿@model IEnumerable<ZaryadApp.Models.Review>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Відгуки";
 }
 
 <h1 class="page-header">Відгуки</h1>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Text)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ApplicationUser)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Text)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ApplicationUser.UserName)
-            </td>
-        </tr>
+    <div class="review">
+        <div class="row">
+            <div class="col">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <img class="user-icon" src="images/user.png"/>
+                    </div>
+                    <div class="col">
+                        <p>@item.Text</p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>@item.ApplicationUser.UserName</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 }
-    </tbody>
-</table>
+
 <a asp-action="Create" class="navigation-element">Залишіть свій відгук</a>

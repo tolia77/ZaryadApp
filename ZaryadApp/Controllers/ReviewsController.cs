@@ -62,6 +62,12 @@ namespace ZaryadApp.Controllers
         public IActionResult Create()
         {
             ViewData["ApplicationUserId"] = new SelectList(_context.Users, "Id", "Id");
+            string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var reviews  = _context.Review.Where(s => s.ApplicationUserId == userId);
+            if(reviews.Count() == 1) 
+            {
+                return View("Error");
+            }
             return View();
         }
 

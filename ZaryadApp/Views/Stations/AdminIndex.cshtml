@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<ZaryadApp.Models.Station>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Адмін панель";
 }
 
 <h1>Index</h1>
@@ -9,28 +9,53 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-@using (Html.BeginForm("Index", "Stations", FormMethod.Get))
-{
+<h1>Заправні станції</h1>
+
+<form asp-controller="Stations" asp-action="Index" method="get" id="searchForm">
     <table>
         <tr>
             <td>
-                @Html.TextBox("city", null, new {Class = "form-control", placeholder = "Місто"})
+                <input class="form-control input-validation-error" id="city" name="city" placeholder="Місто" type="text" value="@ViewData["city"]">
             </td>
             <td>
-                @Html.TextBox("price", null, new {Class = "form-control", placeholder = "Максимальна ціна за кВт" })
+                <input class="form-control input-validation-error" id="price" name="price" placeholder="Максимальна ціна за кВт" type="text" value="@ViewData["price"]">
             </td>
             <td>
-                @Html.TextBox("voltage", null, new {Class = "form-control", placeholder = "Максимальна напруга" })
+
+                <input class="form-control input-validation-error" id="voltage" name="voltage" placeholder="Максимальна напруга" type="text" value="@ViewData["voltage"]">
             </td>
             <td>
                 @Html.DropDownList("plug", ViewBag.Plugs, "Роз'єм", new {Class = "btn btn-secondary dropdown-toggle"})
             </td>
             <td>
-                <input type="submit" value="Пошук" class="btn btn-success" />
+                @Html.DropDownList("settingsId", ViewBag.Settings, "Фільтри", new {Class = "btn btn-secondary dropdown-toggle"})
+            </td>
+            <td>
+                <button type="button" id="createSettingsButton" class="submit-button">Зберегти</button>
+            </td>
+            <td>
+                <input class="submit-button" type="submit" value="Пошук" id="search" />
             </td>
         </tr>
     </table>
-}
+</form>
+<script>
+    const button = document.getElementById('createSettingsButton')
+    button.addEventListener('click', function () {
+        var formData = new FormData(document.getElementById('searchForm'));
+        console.log(formData)
+        fetch('@Url.Action("Create", "Settings")', {
+            method: 'POST',
+            body: formData
+        }).then(function (response) {
+            if (response.ok) {
+                button.innerHTML = "Збережено"
+            } else {
+                button.innerHTML = "Помилка"
+            }
+        })
+    });
+</script>
 <table class="table">
     <thead>
         <tr>

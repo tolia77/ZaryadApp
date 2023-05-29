@@ -1,7 +1,7 @@
 ﻿@model ZaryadApp.Models.Station
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Станція";
 }
 
 <h1>Details</h1>
@@ -11,38 +11,34 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
+            Місто
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.City)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Address)
+            Адреса
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Address)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Plug)
+            Роз'єм'
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Plug)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Voltage)
+            Напруга
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Voltage)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
+            Ціна
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Price)
         </dd>
     </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
 </div>
