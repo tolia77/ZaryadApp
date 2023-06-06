@@ -77,7 +77,7 @@ namespace ZaryadApp.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize]
-        public async Task<IActionResult> Create([Bind("Id,Text,City,CreatedAt,ApplicationUserId")] Review review)
+        public async Task<IActionResult> Create([Bind("Id,Text,UserName,City,CreatedAt,ApplicationUserId")] Review review)
         {
             string userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             review.CreatedAt = DateTime.Now;

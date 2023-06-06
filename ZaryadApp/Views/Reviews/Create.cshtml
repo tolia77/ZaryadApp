@@ -32,6 +32,17 @@
                 </div>
             </div>
             <div class="form-group">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="black-bg" asp-for="UserName" class="control-label">Ваше ім'я</label>
+                    </div>
+                    <div class="col-md-9">
+                        <input class="black-input" asp-for="UserName" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
                 <input class="submit-button" type="submit" value="Створити" />
             </div>
         </form>
